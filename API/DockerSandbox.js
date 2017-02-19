@@ -88,10 +88,11 @@ DockerSandbox.prototype.prepare = function(success)
                     else
                     {
                         console.log("Input file is ready!");
-                        success();
                     }
                 });
             }
+
+            success();
         });
 
 }
