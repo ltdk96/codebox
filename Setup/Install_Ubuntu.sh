@@ -6,7 +6,7 @@
 apt-get update
 apt-get install -y docker.io
 ln -sf /usr/bin/docker.io /usr/local/bin/docker
-sed -i '$acomplete -F _docker docker' /etc/bash_completion.d/docker.io
+sed -i '$acomplete -F _docker docker' /etc/bash_completion.d/docker
 
 echo "Docker Setup complete"
 
@@ -26,5 +26,5 @@ chmod 777 ../API/Payload/script.sh
 chmod 777 ../API/Payload/javaRunner.sh
 chmod 777 UpdateDocker.sh
 
-service docker.io restart
+service docker restart
 ./UpdateDocker.sh
