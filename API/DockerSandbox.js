@@ -117,11 +117,11 @@ DockerSandbox.prototype.execute = function(success)
 {
     var exec = require('child_process').exec;
     var fs = require('fs');
-    var myC = 0; //variable to enforce the timeout_value
+    var myC = 0;    //variable to enforce the timeout_value
     var sandbox = this;
 
     //this statement is what is executed
-    var st = this.path+'DockerTimeout.sh ' + this.timeout_value + 's -i -t -v "' + this.path + this.folder + '":/usercode ' + this.vm_name + ' /usercode/script.sh ' + this.compiler_name + ' ' + this.file_name + ' ' + this.output_command;
+    var st = this.path+'DockerTimeout.sh '+this.timeout_value+'s -itv "'+this.path+this.folder+'":/usercode '+this.vm_name+' /usercode/script.sh '+this.compiler_name+' '+this.file_name+' '+this.output_command;
 
     //log the statement in console
     console.log(st);
@@ -129,26 +129,36 @@ DockerSandbox.prototype.execute = function(success)
     //execute the Docker, This is done ASYNCHRONOUSLY
     exec(st);
     console.log("------------------------------")
+
     //Check For File named "completed" after every 1 second
-    var intid = setInterval(function()
-        {
-            //Displaying the checking message after 1 second interval, testing purposes only
-            //console.log("Checking " + sandbox.path+sandbox.folder + ": for completion: " + myC);
+    var intid = setInterval(function() {
+        //Displaying the checking message after 1 second interval, testing purposes only
+        //console.log("Checking " + sandbox.path+sandbox.folder + ": for completion: " + myC);
+        myC = myC + 1;
 
-            myC = myC + 1;
-
-            fs.readFile(sandbox.path + sandbox.folder + '/completed', 'utf8', function(err, data) {
+        fs.readFile(sandbox.path + sandbox.folder + '/completed', 'utf8', function(err, data) {
 
             //if file is not available yet and the file interval is not yet up carry on
             if (err && myC < sandbox.timeout_value)
             {
-                //console.log(err);
-                return;
+                var data = fs.readFileSync(sandbox.path + sandbox.folder + '/logfile.txt', 'utf8').toString();
+
+                if (data.length <= 1000) {
+                    return;
+                } else {
+                    console.log("Output too long: "+sandbox.folder+" "+sandbox.langName)
+
+                    data += "\nOutput too long!";
+                    var data2 = fs.readFileSync(sandbox.path + sandbox.folder + '/errors', 'utf8').toString();
+
+                    success(data, this.timeout_value, data2)
+                }
             }
             //if file is found simply display a message and proceed
             else if (myC < sandbox.timeout_value)
             {
                 console.log("DONE")
+
                 //check for possible errors
                 fs.readFile(sandbox.path + sandbox.folder + '/errors', 'utf8', function(err2, data2)
                 {
@@ -159,19 +169,15 @@ DockerSandbox.prototype.execute = function(success)
                		console.log("Main File")
                		console.log(data)
 
-			var lines = data.toString().split('*-COMPILEBOX::ENDOFOUTPUT-*')
-			data=lines[0]
-			var time=lines[1]
+        			var lines = data.toString().split('*-COMPILEBOX::ENDOFOUTPUT-*')
+        			data=lines[0]
+        			var time=lines[1]
 
-			console.log("Time: ")
-			console.log(time)
-
+        			console.log("Time: ")
+        			console.log(time)
 
        	           	success(data,time,data2)
                 });
-
-                //return the data to the calling functoin
-
             }
             //if time is up. Save an error message to the data variable
             else
@@ -180,30 +186,29 @@ DockerSandbox.prototype.execute = function(success)
             	fs.readFile(sandbox.path + sandbox.folder + '/logfile.txt', 'utf8', function(err, data){
             		if (!data) data = "";
                     data += "\nExecution Timed Out";
+
                     console.log("Timed Out: "+sandbox.folder+" "+sandbox.langName)
+
                     fs.readFile(sandbox.path + sandbox.folder + '/errors', 'utf8', function(err2, data2)
 	                {
 	                	if(!data2) data2=""
 
-				var lines = data.toString().split('*---*')
-				data=lines[0]
-				var time=lines[1]
+        				var lines = data.toString().split('*---*')
+        				data=lines[0]
+        				var time=lines[1]
 
-				console.log("Time: ")
-				console.log(time)
+        				console.log("Time: ")
+        				console.log(time)
 
-	                   	success(data,data2)
+	                   	success(data, time, data2)
 	                });
             	});
-
             }
-
 
             //now remove the temporary directory
             console.log("ATTEMPTING TO REMOVE: " + sandbox.path + sandbox.folder);
             console.log("------------------------------")
             exec("rm -rf " + sandbox.path + sandbox.folder);
-
 
             clearInterval(intid);
         });
