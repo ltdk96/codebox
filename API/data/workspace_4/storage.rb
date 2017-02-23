@@ -2,6 +2,8 @@ long_text = "At vero eos et accusamus et iusto odio dignissimos ducimus qui blan
 
 Dir.chdir('usercode')
 
-while true
-  File.write('hack.txt', long_text)
+File.open('hack.txt', 'w') do |file|
+  while true
+    file.write(long_text)
+  end
 end
