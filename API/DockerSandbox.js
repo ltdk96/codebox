@@ -46,7 +46,7 @@ DockerSandbox.prototype.run = function(success)
 {
     var sandbox = this;
 
-    this.prepare( function(){
+    this.prepare(function(){
         sandbox.execute(success);
     });
 }
@@ -69,32 +69,34 @@ DockerSandbox.prototype.prepare = function(success)
     var fs = require('fs');
     var sandbox = this;
 
-    exec("mkdir "+ this.path+this.folder + " && cp -r "+this.path+"/Payload/* "+this.path+"/data/"+this.workspace_path+"/* "+this.path+this.folder+" && chmod -R 777 "+ this.path+this.folder,function(error, stdin, stdout)
+    var cp_workspace = "mkdir "+this.path+this.folder + " && cp -r "+this.path+"/data/"+this.workspace_path+"/* " + this.path+this.folder + " && chmod -R 777 "+this.path+this.folder;
+    var cp_payload = "chmod 1777 "+this.path+this.folder + " && cp --preserve=ownership,mode "+this.path+"/Payload/* " + this.path+this.folder;
+
+    exec(cp_workspace, function(error, stdin, stdout) {
+        exec(cp_payload);
+
+        if (error)
         {
-            if (error)
+            console.log(error);
+        }
+        else
+        {
+            console.log(sandbox.langName+" environment is ready!");
+            fs.writeFile(sandbox.path+sandbox.folder+"/inputFile", sandbox.stdin_data, function(err)
             {
-                console.log(error);
-            }
-            else
-            {
-                console.log(sandbox.langName+" environment is ready!");
-
-                fs.writeFile(sandbox.path + sandbox.folder+"/inputFile", sandbox.stdin_data,function(err)
+                if (err)
                 {
-                    if (err)
-                    {
-                        console.log(err);
-                    }
-                    else
-                    {
-                        console.log("Input file is ready!");
-                    }
-                });
-            }
+                    console.log(err);
+                }
+                else
+                {
+                    console.log("Input file is ready!");
+                }
+            });
+        }
 
-            success();
-        });
-
+        success();
+    });
 }
 
 /*
@@ -151,7 +153,7 @@ DockerSandbox.prototype.execute = function(success)
                     data += "\nOutput too long!";
                     var data2 = fs.readFileSync(sandbox.path + sandbox.folder + '/errors', 'utf8').toString();
 
-                    success(data, this.timeout_value, data2)
+                    success(data, sandbox.timeout_value, data2)
                 }
             }
             //if file is found simply display a message and proceed

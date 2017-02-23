@@ -23,3 +23,7 @@ RUN apt-get update
 RUN apt-get install -y python3.6
 
 RUN apt-get install -y bc
+
+# Add non-root user
+RUN useradd -ms /bin/bash learner
+USER learner

@@ -1,18 +1,27 @@
 Dir.chdir('usercode')
 
-if File.exists?('script.sh')
-  puts 'Script: True'
-  puts File.delete('script.sh')
-end
+# 0. gaining root permission
+puts `whoami`
+# - list all users / groups
+# - change to root user (password in-line): docker / ruby
+# - change file's permisson
 
-if File.exists?('logfile.txt')
-  puts 'Log: True'
-  puts File.delete('logfile.txt')
-end
 
-if File.exists?('errors')
-  puts 'Error: True'
-  puts File.delete('errors')
-end
+# 1. list all filenames & content:
+# Dir.glob('*').each do |file|
+#   puts "Name: " + file
+#   puts "is a file? " if File.file?(file)
+#   puts "Content: " + File.read(file)
+# end
 
-sleep 5
+# 2. attempt to add content
+# Dir.glob('*').each do |file|
+#   puts "Name: " + file
+#   File.write(file, "You're hacked!") if File.file?(file)
+# end
+
+# # 3. attempt to delete
+# Dir.glob('*').each do |file|
+#   puts "Name: " + file
+#   File.delete(file)
+# end
