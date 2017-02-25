@@ -70,32 +70,33 @@ DockerSandbox.prototype.prepare = function(success)
     var sandbox = this;
 
     var cp_workspace = "mkdir "+this.path+this.folder + " && cp -r "+this.path+"/data/"+this.workspace_path+"/* " + this.path+this.folder + " && chmod -R 777 "+this.path+this.folder;
-    var cp_payload = "chmod 1777 "+this.path+this.folder + " && cp --preserve=ownership,mode "+this.path+"/Payload/* " + this.path+this.folder;
+    var cp_payload = "chmod 775 "+this.path+this.folder + " && cp --preserve=ownership,mode "+this.path+"/Payload/* " + this.path+this.folder;
 
-    exec(cp_workspace, function(error, stdin, stdout) {
-        exec(cp_payload);
-
-        if (error)
-        {
-            console.log(error);
-        }
-        else
-        {
-            console.log(sandbox.langName+" environment is ready!");
-            fs.writeFile(sandbox.path+sandbox.folder+"/inputFile", sandbox.stdin_data, function(err)
+    exec(cp_workspace, function(err) {
+        exec(cp_payload, function() {
+            if (err)
             {
-                if (err)
-                {
-                    console.log(err);
-                }
-                else
-                {
-                    console.log("Input file is ready!");
-                }
-            });
-        }
+                console.log(err);
+            }
+            else
+            {
+                console.log(sandbox.langName+" environment is ready!");
 
-        success();
+                fs.writeFile(sandbox.path+sandbox.folder+"/inputFile", sandbox.stdin_data, function(err2)
+                {
+                    if (err2)
+                    {
+                        console.log(err2);
+                    }
+                    else
+                    {
+                        console.log("Input file is ready!");
+                    }
+                });
+            }
+
+            success();
+        });
     });
 }
 
@@ -132,78 +133,73 @@ DockerSandbox.prototype.execute = function(success)
     exec(st);
     console.log("------------------------------")
 
-    //Check For File named "completed" after every 1 second
+    //Check for File-content of "completed" every 100 milisecs
     var intid = setInterval(function() {
-        //Displaying the checking message after 1 second interval, testing purposes only
-        //console.log("Checking " + sandbox.path+sandbox.folder + ": for completion: " + myC);
-        myC = myC + 1;
+        myC = myC + 0.1;
 
         fs.readFile(sandbox.path + sandbox.folder + '/completed', 'utf8', function(err, data) {
+            if(!data) data = "";
+            data = data.toString();
 
-            //if file is not available yet and the file interval is not yet up carry on
-            if (err && myC < sandbox.timeout_value)
+            // if data is not yet available and the file interval is not yet up
+            // check for too-long output & error, if no problem then continue
+            if (data.length == 0 && myC < sandbox.timeout_value)
             {
-                var data = fs.readFileSync(sandbox.path + sandbox.folder + '/logfile.txt', 'utf8').toString();
+                var log = fs.readFileSync(sandbox.path + sandbox.folder + '/logfile.txt', 'utf8').toString();
+                var errors = fs.readFileSync(sandbox.path + sandbox.folder + '/errors', 'utf8').toString();
 
-                if (data.length <= 1000) {
+                if (log.length <= 1000 && errors.length <= 1000) {
                     return;
                 } else {
-                    console.log("Output too long: "+sandbox.folder+" "+sandbox.langName)
+                    console.log("Output/errors is too long: "+sandbox.folder+" "+sandbox.langName)
 
-                    data += "\nOutput too long!";
-                    var data2 = fs.readFileSync(sandbox.path + sandbox.folder + '/errors', 'utf8').toString();
+                    log = "Output/errors is too long!";
+                    errors = "Output/errors is too long!";
 
-                    success(data, sandbox.timeout_value, data2)
+                    success(log, sandbox.timeout_value, errors)
                 }
             }
-            //if file is found simply display a message and proceed
+            // if data is available, simply display a message and proceed
             else if (myC < sandbox.timeout_value)
             {
                 console.log("DONE")
 
+                var lines = data.split('*-COMPILEBOX::ENDOFOUTPUT-*')
+                data=lines[0]
+                var time=lines[1]
+
+                if(data.length > 1000) data = "Output is too long!";
+
                 //check for possible errors
-                fs.readFile(sandbox.path + sandbox.folder + '/errors', 'utf8', function(err2, data2)
+                fs.readFile(sandbox.path + sandbox.folder + '/errors', 'utf8', function(err2, errors)
                 {
-                	if(!data2) data2=""
+                	if(!errors) errors=""
+                    if(errors.length > 1000) errors = "Errors is too long!";
                		console.log("Error file: ")
-               		console.log(data2)
+               		console.log(errors)
 
                		console.log("Main File")
-               		console.log(data)
-
-        			var lines = data.toString().split('*-COMPILEBOX::ENDOFOUTPUT-*')
-        			data=lines[0]
-        			var time=lines[1]
+                    console.log(data)
 
         			console.log("Time: ")
         			console.log(time)
 
-       	           	success(data,time,data2)
+       	           	success(data, time, errors)
                 });
             }
-            //if time is up. Save an error message to the data variable
+            // if time is up. Save an error message to the data variable
             else
             {
             	//Since the time is up, we take the partial output and return it.
-            	fs.readFile(sandbox.path + sandbox.folder + '/logfile.txt', 'utf8', function(err, data){
-            		if (!data) data = "";
-                    data += "\nExecution Timed Out";
+            	fs.readFile(sandbox.path + sandbox.folder + '/logfile.txt', 'utf8', function(err, log) {
+            		if (!log) log = "";
+                    log = log.toString();
+
+                    if(log.length <= 1000) log += "\nExecution Timed Out!";
+                    else log = "Output is too long!";
 
                     console.log("Timed Out: "+sandbox.folder+" "+sandbox.langName)
-
-                    fs.readFile(sandbox.path + sandbox.folder + '/errors', 'utf8', function(err2, data2)
-	                {
-	                	if(!data2) data2=""
-
-        				var lines = data.toString().split('*---*')
-        				data=lines[0]
-        				var time=lines[1]
-
-        				console.log("Time: ")
-        				console.log(time)
-
-	                   	success(data, time, data2)
-	                });
+                    success(log, sandbox.timeout_value, "Execution Timed Out!")
             	});
             }
 
@@ -214,7 +210,7 @@ DockerSandbox.prototype.execute = function(success)
 
             clearInterval(intid);
         });
-    }, 1000);
+    }, 100);
 
 }
 
