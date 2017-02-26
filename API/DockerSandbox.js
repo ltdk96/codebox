@@ -153,8 +153,8 @@ DockerSandbox.prototype.execute = function(success)
                 } else {
                     console.log("Output/errors is too long: "+sandbox.folder+" "+sandbox.langName)
 
-                    log = "Output/errors is too long!";
-                    errors = "Output/errors is too long!";
+                    if(log.length > 1000) log = "Output is too long!";
+                    if(errors.length > 1000) errors = "Errors is too long!";
 
                     success(log, sandbox.timeout_value, errors)
                 }
