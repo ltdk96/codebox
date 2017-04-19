@@ -14,5 +14,7 @@
 	*Revised on: 30th June 2014 (Added Column number 4 to display the name of languages to console)
 */
 
-exports.compilerArray= [ ["python3","","Python"], ["ruby","","Ruby"] ];
+exports.compilerArray= [ ["python3","","Python"],
+												 ["ruby","","Ruby"],
+												 ["\'javac -cp /usercode/\'", "./usercode/javaRunner.sh", "Java"] ];
 

@@ -4,7 +4,7 @@ set -e
 to=$1
 shift
 
-cont=$(docker run -d --net=none --memory=64M --memory-swap=64M --memory-swappiness=0 --kernel-memory=16M --cpu-quota=25000 --cpuset-cpus="0" "$@")
+cont=$(docker run -d --net=none --memory=64M --memory-swap=64M --memory-swappiness=0 --kernel-memory=16M --cpu-quota=25000 --cpuset-cpus="0" --device-write-bps=/dev/sda:1mb "$@")
 code=$(timeout "$to" docker wait "$cont" || true)
 docker stop $cont &> /dev/null
 echo -n 'status: '

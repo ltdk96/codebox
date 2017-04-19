@@ -70,7 +70,7 @@ DockerSandbox.prototype.prepare = function(success)
     var sandbox = this;
 
     var cp_workspace = "mkdir "+this.path+this.folder + " && cp -r "+this.path+"/data/"+this.workspace_path+"/* " + this.path+this.folder + " && chmod -R 777 "+this.path+this.folder;
-    var cp_payload = "chmod 775 "+this.path+this.folder + " && cp --preserve=ownership,mode "+this.path+"/Payload/* " + this.path+this.folder;
+    var cp_payload = "cp --preserve=ownership,mode "+this.path+"/Payload/* " + this.path+this.folder;
 
     exec(cp_workspace, function(err) {
         exec(cp_payload, function() {
@@ -148,13 +148,13 @@ DockerSandbox.prototype.execute = function(success)
                 var log = fs.readFileSync(sandbox.path + sandbox.folder + '/logfile.txt', 'utf8').toString();
                 var errors = fs.readFileSync(sandbox.path + sandbox.folder + '/errors', 'utf8').toString();
 
-                if (log.length <= 1000 && errors.length <= 1000) {
+                if (log.length <= 10000 && errors.length <= 10000) {
                     return;
                 } else {
                     console.log("Output/errors is too long: "+sandbox.folder+" "+sandbox.langName)
 
-                    if(log.length > 1000) log = "Output is too long!";
-                    if(errors.length > 1000) errors = "Errors is too long!";
+                    if(log.length > 10000) log = "Output is too long!";
+                    if(errors.length > 10000) errors = "Errors is too long!";
 
                     success(log, sandbox.timeout_value, errors)
                 }
@@ -168,13 +168,13 @@ DockerSandbox.prototype.execute = function(success)
                 data=lines[0]
                 var time=lines[1]
 
-                if(data.length > 1000) data = "Output is too long!";
+                if(data.length > 10000) data = "Output is too long!";
 
                 //check for possible errors
                 fs.readFile(sandbox.path + sandbox.folder + '/errors', 'utf8', function(err2, errors)
                 {
                 	if(!errors) errors=""
-                    if(errors.length > 1000) errors = "Errors is too long!";
+                    if(errors.length > 10000) errors = "Errors is too long!";
                		console.log("Error file: ")
                		console.log(errors)
 
@@ -195,7 +195,7 @@ DockerSandbox.prototype.execute = function(success)
             		if (!log) log = "";
                     log = log.toString();
 
-                    if(log.length <= 1000) log += "\nExecution Timed Out!";
+                    if(log.length <= 10000) log += "\nExecution Timed Out!";
                     else log = "Output is too long!";
 
                     console.log("Timed Out: "+sandbox.folder+" "+sandbox.langName)

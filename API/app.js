@@ -43,8 +43,15 @@ app.post('/compile',function(req, res)
     var vm_name='virtual_machine'; //name of virtual machine that we want to execute
     var timeout_value=5;//Timeout Value, In Seconds
 
+    var output_command = arr.compilerArray[language][1];
+    if (output_command.length > 0)
+    {
+        output_command = "\'"+output_command+' '+ target_file+"\'";
+        timeout_value = 10;
+    }
+
     //details of this are present in DockerSandbox.js
-    var sandboxType = new sandBox(timeout_value, path, folder, vm_name, arr.compilerArray[language][0], workspace_path, target_file, arr.compilerArray[language][1], arr.compilerArray[language][2], stdin);
+    var sandboxType = new sandBox(timeout_value, path, folder, vm_name, arr.compilerArray[language][0], workspace_path, target_file, output_command, arr.compilerArray[language][2], stdin);
 
 
     //data will contain the output of the compiled/interpreted code
