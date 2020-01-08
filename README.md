@@ -36,8 +36,6 @@ CodeBox is developed based on **CompileBox** (https://github.com/remoteinterview
 
 For an overview of the features and how safe is CodeBox in running untrusted code, please kindly refer to [this poster][5]. For more details on the implementation, please kindly refer to [this paper][2].
 
-##### Thank you for taking your time reading this note!
-
 [1]: https://www.facebook.com/bmag.vn/
 [2]: https://drive.google.com/open?id=1x7_zMWfhSSZF_zkQG927pP2Htx_Qb3j-
 [3]: http://international.fpt.edu.vn/fpt-university-students-won-prize-hcmc-young-informatics-contest/
