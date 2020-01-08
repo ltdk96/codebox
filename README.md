@@ -32,7 +32,7 @@ While the back-end was entirely designed and developed by me, the front-end was 
 ## More Details on CodeBox 
 CodeBox is a **locally installed** Node.js API that wraps inside a *Docker-based* sandbox to **run untrusted code** on-demand, returning outputs to the local sender.
 
-CodeBox is developed based on **CompileBox** (https://github.com/remoteinterview/compilebox) with one major improvement - the ability to execute a **full code project** instead of just a single code file. This is valuable to ThinkCode.VN because code challenges often include many template files, and we need to grade users' submissions.
+CodeBox is developed based on **CompileBox** (https://github.com/remoteinterview/compilebox) with many improvements in security and one major feature - the ability to execute a **full code project** instead of just a single code file. This is valuable to ThinkCode.VN because code challenges often include many template files, and we need to grade users' submissions.
 
 For an overview of the features and how safe is CodeBox in running untrusted code, please kindly refer to [this poster][5]. For more details on the implementation, please kindly refer to [this paper][2].
 
