@@ -13,9 +13,9 @@ These features helped beginners to focus on essential programming concepts as de
 **Remark**: Please be aware that since this project is **no longer active**, its associated domain - https://thinkcode.vn - is down as well.
 
 ## Won Awards
-**Project ThinkCode** received the [**3rd Prize in Creative Software** at **Ho Chi Minh City Youth Informatics Contest 2017**][3].
+**Project ThinkCode** won the [**3rd Prize in Creative Software** at **Ho Chi Minh City Youth Informatics Contest 2017**][3].
 
-**CodeBox Engine** received the **2nd Prize** at **FPT University's Research Conference for Students (2017)**.
+**CodeBox Engine** won the **2nd Prize** at **FPT University's Research Conference for Students (2017)**.
 
 ## More Details on ThinkCode.VN
 The back-end of ThinkCode.VN is a Ruby on Rails API deployed on **Amazon EC2** with many features, including:
