@@ -39,7 +39,7 @@ For an overview of the features and how safe is CodeBox in running untrusted cod
 ##### Thank you for taking your time reading this note!
 
 [1]: https://www.facebook.com/bmag.vn/
-[2]: https://to-be-updated.github.com/
+[2]: https://drive.google.com/open?id=1x7_zMWfhSSZF_zkQG927pP2Htx_Qb3j-
 [3]: http://international.fpt.edu.vn/fpt-university-students-won-prize-hcmc-young-informatics-contest/
 [4]: https://github.com/nguyenkevtran
-[5]: https://to-be-updated.github.com/
+[5]: https://drive.google.com/open?id=1UR3e7rWqlprQfHSg5-q-fwlz5Qr_fqAI
