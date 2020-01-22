@@ -19,7 +19,7 @@ These features helped beginners to focus on essential programming concepts as de
 
 ## More Details on ThinkCode.VN
 The API of ThinkCode.VN was written using **Ruby on Rails** + deployed on **Amazon EC2**. It has many features, including:
-1. Code management (upload-download code-templates, extract-zip code-templates, file manipulation, etc.)
+1. Code management (upload/download code templates, extract/zip code templates, directory manipulation, etc.)
 2. Content creation under a **multi-step, multi-agent** moderating process
 3. Upload and quickly serve static assets using Amazon S3 and Cloudfront
 
@@ -32,7 +32,7 @@ While the back-end was entirely designed and developed by me, the front-end was 
 ## More Details on CodeBox (this repo)
 CodeBox is a **locally installed** Node.js API that wraps a **Docker-based sandbox** inside to **run untrusted code** on-demand, returning outputs to the local sender.
 
-CodeBox is developed based on **CompileBox** (https://github.com/remoteinterview/compilebox) with many security improvements and one major feature - the ability to execute a **full code project** instead of a single code file. This is valuable to ThinkCode.VN because code challenges often include many template-files, and we need to grade users' submissions.
+CodeBox is developed based on **CompileBox** (https://github.com/remoteinterview/compilebox) with many security improvements and one major feature - the ability to execute a **full code project** instead of a single code file. This is valuable to ThinkCode.VN because code challenges often include many template files, and we need to grade users' submissions.
 
 For an overview of the features and how safe CodeBox is in running untrusted code, please kindly refer to [this poster][5]. 
 
